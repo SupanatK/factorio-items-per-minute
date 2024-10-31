@@ -1,8 +1,8 @@
+local global = {}
 
 script.on_init(function()
     create_global_tables()
 end)
-
 script.on_configuration_changed(function()
     create_global_tables()
     global.entity_blacklist = {
@@ -297,10 +297,10 @@ function create_gui_list_entry(parent, item_data, button_state)
     }
 
     if item_data.type == "item" then
-        data_name = game.item_prototypes[item_data.name].localised_name
+        data_name = prototypes.item[item_data.name].localised_name
         data_sprite = "item/" .. item_data.name
     elseif item_data.type == "fluid" then
-        data_name = game.fluid_prototypes[item_data.name].localised_name
+        data_name = prototypes.fluid[item_data.name].localised_namesaa
         data_sprite = "fluid/" .. item_data.name
     else
         return
@@ -373,7 +373,7 @@ end
 
 function get_rate_data_for_entity(entity)
     -- done instead of entity.recipe() since this does null checking and returns previous furnace recipies
-    local recipe = game.recipe_prototypes[get_recipe_name_safe(entity)]
+    local recipe = entity.get_recipe()
     if recipe == nil then return {}, {} end
 
     local out_ingredients = {}

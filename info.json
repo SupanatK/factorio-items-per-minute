@@ -1,10 +1,10 @@
 {
-    "name": "assembler-craft-rates",
-    "version": "0.1.5",
-    "title": "Assembler Production Rates",
-    "author": "TheTorukMakto",
-    "factorio_version": "1.1",
-    "dependencies": ["base >= 1.1"],
-    "contact": "Discord: thetorukmakto",
+    "name": "productions-per-minute",
+    "version": "0.2",
+    "title": "Productions Per Minute",
+    "author": "KeiraFlamefox",
+    "factorio_version": "2.0",
+    "dependencies": ["base >= 2.0"],
+    "contact": "Please raise issue on github.",
     "description": "Assemblers and Furnaces show the maximum production rate of the currently selected recipe in their GUI."
 }
