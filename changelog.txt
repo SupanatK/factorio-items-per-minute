@@ -1,4 +1,4 @@
-Version: 0.2.0
+Version: 0.2.1
 Date: 01. 11. 2024
 Changes: 
   - Fix crash when click on building with recipe contain fluid
