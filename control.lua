@@ -303,7 +303,7 @@ function create_gui_list_entry(parent, item_data, button_state)
         data_name = prototypes.item[item_data.name].localised_name
         data_sprite = "item/" .. item_data.name
     elseif item_data.type == "fluid" then
-        data_name = prototypes.fluid[item_data.name].localised_namesaa
+        data_name = prototypes.fluid[item_data.name].localised_names
         data_sprite = "fluid/" .. item_data.name
     else
         return
