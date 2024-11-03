@@ -83,10 +83,6 @@ end)
 script.on_event(defines.events.on_gui_click, function(event)
     if not global then create_global_tables() end;
 
-    if not global.gui_data_by_player[event.player_index] then
-        create_assembler_rate_gui(game.get_player(event.player_index), event.entity)
-    end
-
     local gui_data = global.gui_data_by_player[event.player_index]
     if gui_data then
         local clicked = nil
@@ -106,10 +102,6 @@ end)
 script.on_event(defines.events.on_tick, function(event)
     if not global.gui_data_by_player then return end
     -- if (event.tick % 4) ~= 0 then return endif not global then create_global_tables() end;
-
-    if not global.gui_data_by_player[event.player_index] then
-        create_assembler_rate_gui(game.get_player(event.player_index), event.entity)
-    end
 
     -- iterate through tracked entities, and update guis if a thing that affects crafting speed changes
     for player_index, gui_data in pairs(global.gui_data_by_player) do
