@@ -5,9 +5,26 @@ local const INDEX_ITEM_PER_HOUR = 3
 
 script.on_init(function()
     create_global_tables()
+    initEntityBlacklist()
 end)
+
+script.on_load(function()
+    create_global_tables()
+    initEntityBlacklist()
+end)
+
 script.on_configuration_changed(function()
     create_global_tables()
+    initEntityBlacklist()
+end)
+
+function create_global_tables()
+    if not global.gui_data_by_player            then global.gui_data_by_player = {}            end
+    if not global.gui_data_by_player_persistent then global.gui_data_by_player_persistent = {} end
+    if not global.entity_blacklist              then global.entity_blacklist = {} end
+end
+
+function initEntityBlacklist()
     global.entity_blacklist = {
         "se-delivery-cannon",
         "se-delivery-cannon-weapon",
@@ -25,18 +42,16 @@ script.on_configuration_changed(function()
     for prototype_name in string.gmatch(entity_blacklist_str, '([^,]+)') do
         table.insert(global.entity_blacklist, prototype_name)
     end
-end)
-
-function create_global_tables()
-    if not global.gui_data_by_player            then global.gui_data_by_player = {}            end
-    if not global.gui_data_by_player_persistent then global.gui_data_by_player_persistent = {} end
-    if not global.entity_blacklist              then global.entity_blacklist = {} end
 end
 
 -- should we make a GUI for this entity?
 function is_valid_gui_entity(entity)
     -- first we check the type of entity, most things should not have the GUI
     if not (entity.type == "assembling-machine" or entity.type == "furnace") then return false end
+
+    if(global.entity_blacklist == nil) then
+        initEntityBlacklist()
+    end
 
     -- then, we check the entity name against the blacklist
     for _, blacklist_name in pairs(global.entity_blacklist) do
@@ -66,6 +81,12 @@ script.on_event(defines.events.on_gui_closed, function(event)
 end)
 
 script.on_event(defines.events.on_gui_click, function(event)
+    if not global then create_global_tables() end;
+
+    if not global.gui_data_by_player[event.player_index] then
+        create_assembler_rate_gui(game.get_player(event.player_index), event.entity)
+    end
+
     local gui_data = global.gui_data_by_player[event.player_index]
     if gui_data then
         local clicked = nil
@@ -84,7 +105,11 @@ end)
 
 script.on_event(defines.events.on_tick, function(event)
     if not global.gui_data_by_player then return end
-    -- if (event.tick % 4) ~= 0 then return end
+    -- if (event.tick % 4) ~= 0 then return endif not global then create_global_tables() end;
+
+    if not global.gui_data_by_player[event.player_index] then
+        create_assembler_rate_gui(game.get_player(event.player_index), event.entity)
+    end
 
     -- iterate through tracked entities, and update guis if a thing that affects crafting speed changes
     for player_index, gui_data in pairs(global.gui_data_by_player) do
@@ -119,6 +144,11 @@ end)
 
 -- do a little cleanup if a player gets removed
 script.on_event(defines.events.on_player_removed, function(event)
+
+    -- don't do anything if there is no player data to begin with
+    if not global then return end
+    if not global.gui_data_by_player or not global.gui_data_by_player[event.player_index] then return end
+
     global.gui_data_by_player[event.player_index]            = nil
     global.gui_data_by_player_persistent[event.player_index] = nil
 end)
