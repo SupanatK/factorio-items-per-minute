@@ -1,3 +1,8 @@
+Version: 0.2.3
+Date 06. 09. 2025
+Changes:
+  - Change default rate to per second.
+
 Version: 0.2.2
 Date: 03. 11. 2024
 Changes: 
