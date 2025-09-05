@@ -1,10 +1,10 @@
 {
     "name": "productions-per-minute",
-    "version": "0.2.2",
+    "version": "0.2.3",
     "title": "Productions Per Minute",
     "author": "KeiraFlamefox",
     "factorio_version": "2.0",
     "dependencies": ["base >= 2.0"],
-    "contact": "Please raise issue on github.",
+    "contact": "Please raise issue on github or in factorio mod page.",
     "description": "Assemblers and Furnaces show the maximum production rate of the currently selected recipe in their GUI."
 }
