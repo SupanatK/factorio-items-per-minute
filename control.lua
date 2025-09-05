@@ -219,7 +219,7 @@ function create_assembler_rate_gui(player, entity)
         gui = gui_frame,
         data_flow = data_flow,
         button = controls_buttons,
-        button_state = global.gui_data_by_player_persistent[player.index].button_state or INDEX_ITEM_PER_MIN,
+        button_state = global.gui_data_by_player_persistent[player.index].button_state or INDEX_ITEM_PER_SEC,
         entity = entity
     }
 
