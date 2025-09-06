@@ -165,7 +165,7 @@ function create_assembler_rate_gui(player, entity)
     end
 
     -- the base frame, that everything goes into
-    local gui_frame = player.gui.relative.add{type="frame", caption="Products", name="assembler-craft-rates-gui"}
+    local gui_frame = player.gui.relative.add{type="frame", caption={"text.ppm-assembler-craft-rates-gui-caption"}, name="assembler-craft-rates-gui"}
 
     -- attach the new GUI to the correct machine type
     if entity.type == "assembling-machine" then
@@ -193,7 +193,7 @@ function create_assembler_rate_gui(player, entity)
 
     -- and to do the controls
     local controls_flow = contents_flow.add{type="flow", direction="horizontal"}
-    controls_flow.add{type="label", caption="Display as:"}
+    controls_flow.add{type="label", caption={"text.ppm-display-as-label"}}
     controls_flow.style.vertical_align = "center"
 
     -- buttons get their own flow since they're a single group
@@ -202,9 +202,9 @@ function create_assembler_rate_gui(player, entity)
 
     local controls_buttons = {}
 
-    for k, label in ipairs({"items/s", "items/m", "items/h"}) do
+    for k, label in ipairs({{"text.ppm-items-per-second"}, {"text.ppm-items-per-minute"}, {"text.ppm-items-per-hour"}}) do
         local new_button = controls_buttons_flow.add{type="button", caption=label}
-        new_button.style.size = {70,22}
+        new_button.style.size = {70,25}
         new_button.style.padding = {0,0,0,0}
         controls_buttons[k] = new_button
     end
@@ -266,7 +266,7 @@ function create_gui_list_ui(parent, entity, button_state)
             -- we only need to make the list if there's ingredients in the recipes (some modded recipies have)
             -- (no ingredients, like K2's atmospheric condenser)
             if #recipe_ingredients > 0 then
-                create_gui_list(parent, "Ingredients:", recipe_ingredients, button_state)
+                create_gui_list(parent, {"text.ppm-ingredients-label"}, recipe_ingredients, button_state)
             end
 
             if #recipe_ingredients > 0 and #recipe_products > 0 then
@@ -275,17 +275,17 @@ function create_gui_list_ui(parent, entity, button_state)
 
             -- and ditto for products (some mods have item void recipies, this makes them display properly)
             if #recipe_products > 0 then
-                create_gui_list(parent, "Products:", recipe_products, button_state)
+                create_gui_list(parent, {"text.ppm-products-label"}, recipe_products, button_state)
             end
 
             return true
         else
-            local no_items_text = parent.add{type="label", caption="Curent recipe has no ingredients and no products"}
+            local no_items_text = parent.add{type="label", caption={"text.ppm-no-items-text"}}
 
             return false
         end
     else
-        local no_recipe_text = parent.add{type="label", caption="No recipe selected"}
+        local no_recipe_text = parent.add{type="label", caption={"text.ppm-no-recipe-text"}}
 
         return false
     end
@@ -316,9 +316,9 @@ function create_gui_list_entry(parent, item_data, button_state)
     local data_name = nil
     local data_sprite = nil
     local button_state_lut = {
-        {1,    "s"},
-        {60,   "m"},
-        {3600, "h"}
+        {1,    {"text.ppm-rate-per-second-postfix"}},
+        {60,   {"text.ppm-rate-per-minute-postfix"}},
+        {3600, {"text.ppm-rate-per-hour-postfix"}}
     }
 
     if item_data.type == "item" then
@@ -354,15 +354,25 @@ function create_gui_list_entry(parent, item_data, button_state)
 end
 
 function format_gui_list_entry_rate(rate, postfix)
-    local suffixes = {'','k','M','G','T','P'}
+    local suffixes = {
+        '',                          -- 10^0
+        {'si-prefix-symbol-kilo'},   -- 10^3
+        {'si-prefix-symbol-mega'},   -- 10^6
+        {'si-prefix-symbol-giga'},   -- 10^9
+        {'si-prefix-symbol-tera'},   -- 10^12
+        {'si-prefix-symbol-peta'},   -- 10^15
+        {'si-prefix-symbol-exa'},    -- 10^18
+        {'si-prefix-symbol-zetta'},  -- 10^21
+        {'si-prefix-symbol-yotta'},  -- 10^24
+        {'si-prefix-symbol-ronna'},  -- 10^27
+        {'si-prefix-symbol-quetta'}, -- 10^30
+    }
     local exponent = math.floor(math.log(rate) / math.log(10))
 
     exponent_rounded = math.floor(exponent / 3) * 3
     exponent_rounded = math.max(exponent_rounded, 0)
-    exponent_rounded = math.min(exponent_rounded, 15)
+    exponent_rounded = math.min(exponent_rounded, 30)
     local rate_scaled = rate / 10^exponent_rounded
-
-    local fstring = "%s%s/%s"
 
     local rate_precision = 1
     if exponent > 0 then
@@ -376,12 +386,13 @@ function format_gui_list_entry_rate(rate, postfix)
     -- https://stackoverflow.com/questions/24697848/strip-trailing-zeroes-and-decimal-point
     local rate_string = string.format(" %."..rate_precision.."f", rate_scaled):gsub("%.?0+$", "")
 
-    return string.format(
-        fstring,
+    return {
+        "",
         rate_string,
         suffixes[(exponent_rounded/3)+1],
+        "/",
         postfix
-    )
+    }
 
 end
 
