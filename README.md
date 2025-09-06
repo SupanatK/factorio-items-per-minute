@@ -6,3 +6,4 @@ All credit go to the original creator of the mod TheTorukMakto
 
 Special thanks to following people for contribution
 - UltraJohn
+- snipervld: https://github.com/snipervld
