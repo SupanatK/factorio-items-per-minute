@@ -14,6 +14,9 @@ local display_as_map = {
     {multiplier=3600, label={"text.ppm-items-per-hour"},   postfix={"text.ppm-rate-per-hour-postfix"}}
 }
 
+-- factorio 2.1 has independent_probability and shared_probability instead of old probability
+local is21 = helpers.compare_versions(helpers.game_version, '2.1.0') >= 0
+
 script.on_init(function()
     create_global_tables()
     initEntityBlacklist()
@@ -728,7 +731,7 @@ function get_rate_data_for_entity(entity)
     for _, product in pairs(recipe.products) do
         local product_min = 0
         local product_max = 0
-        local product_probability = product.probability or 1
+        local product_probability = get_product_probability(product)
 
         local bonus_product = 0
         local bonus_multiplier = productivity_bonus + recipe.productivity_bonus
@@ -968,7 +971,7 @@ function get_mineable_resources(entity)
 
             local resource_min = 0
             local resource_max = 0
-            local resource_probability = product.probability or 1
+            local resource_probability = get_product_probability(product)
 
             if product.amount then
                 resource_min = product.amount
@@ -998,4 +1001,25 @@ function get_mineable_resources(entity)
 
         return out_resources, mining_fluid
     end
+end
+
+--- @param product Product
+--- @return number
+function get_product_probability(product)
+    --- @type number
+    local product_probability = 1
+
+    if is21 then
+        if product.shared_probability then
+            local min_p = product.shared_probability.min or 0
+            local max_p = product.shared_probability.max or 1
+            product_probability = math.max(0, max_p - min_p)
+        elseif product.independent_probability then
+            product_probability = product.independent_probability
+        end
+    else
+        product_probability = product.probability or 1
+    end
+
+    return product_probability
 end
